@@ -1,0 +1,40 @@
+﻿<Window x:Class="TaskManagerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskManagerApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+
+        <StackPanel Name="RegisterForm" Width="150" Height="300"  HorizontalAlignment="Left" Margin="50" VerticalAlignment="Top">
+            <TextBlock Text="Register" FontSize="40" />
+
+            <TextBlock Margin="10,0,10,0">Login</TextBlock>
+            <TextBox  Margin="10,0,10,10" Name="RegisterLogin"></TextBox>
+
+            <TextBlock Margin="10,0,10,0">Password</TextBlock>
+            <TextBox Margin="10,0,10,10" Name="RegisterPassword"></TextBox>
+
+            <TextBlock Margin="10,0,10,0">E-mail</TextBlock>
+            <TextBox Margin="10,0,10,10" Name="RegisterEMail"></TextBox>
+
+            <Button Name ="RegisterSend" Margin="10,0,10,0" Click="RegisterSend_Click">Register</Button>
+
+        </StackPanel>
+
+        <StackPanel Name="LoginForm" Width="150" Height="300" HorizontalAlignment="Right" Margin="50" VerticalAlignment="Top">
+            <TextBlock Text="Login" FontSize="40" />
+
+            <TextBlock Margin="10,0,10,0">Login</TextBlock>
+            <TextBox Margin="10,0,10,10" Name="LoginLogin"></TextBox>
+
+            <TextBlock Margin="10,0,10,0">Password</TextBlock>
+            <TextBox Margin="10,0,10,10" Name="LoginPassword"></TextBox>
+            <Button Name ="LoginSend" Margin="10,0,10,0" Click="LoginSend_Click">Login</Button>
+
+        </StackPanel>
+
+    </Grid>
+</Window>

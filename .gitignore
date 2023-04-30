@@ -1,0 +1,6 @@
+TestResults/
+bin/
+obj/
+*/TestResults/
+*/bin/
+*/obj/
