@@ -47,13 +47,62 @@ namespace TaskManagerApp
             return Convert.ToBase64String(passwordHashed);
 
         }
+        #region Metods checking if value exist in database
+        private static bool DoesLoginExist(string login)
+        {
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            string CheckLogin = $"Select Login FROM Users WHERE Login = '{login}'";
+            SqlCommand CheckIfLoginExists = new SqlCommand(CheckLogin, connection);
+            SqlDataReader Login = CheckIfLoginExists.ExecuteReader();
+            bool DoesLoginExist = Login.Read();
+
+            Login.Close();
+            connection.Close();
+            return DoesLoginExist;
+            
+        }
+
+        private static bool DoesPasswordExist(string password)
+        {
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            string CheckPassword = $"Select Password FROM Users WHERE Password = '{password}'";
+            SqlCommand CheckIfPasswordExists = new SqlCommand(CheckPassword, connection);
+            SqlDataReader Login = CheckIfPasswordExists.ExecuteReader();
+            bool DoesPasswordExist = Login.Read();
+
+            Login.Close();
+            connection.Close();
+            return DoesPasswordExist;
+        }
+
+        private static bool DoesEMailExist(string Email)
+        {
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            string CheckEmail = $"Select [E-Mail] From Users WHERE ([E-Mail]) = '{Email}'";
+            SqlCommand CheckIfEMailExists = new SqlCommand(CheckEmail, connection);
+            SqlDataReader EMail = CheckIfEMailExists.ExecuteReader();
+            bool DoesPasswordExist = EMail.Read();
+
+            EMail.Close();
+            connection.Close();
+            return DoesPasswordExist;
+        }
+
+        #endregion
 
 
 
 
-
-        
-        #region register form validation
+        #region register form validation realtime
         private void RegisterLogin_TextChanged(object sender, TextChangedEventArgs e)
         {
             
@@ -119,22 +168,16 @@ namespace TaskManagerApp
 
                 connection.Open();
 
-                // Checking if Email or passoword Is already in the database
-                SqlCommand CheckIfLoginExists = new SqlCommand(CheckLogin, connection);
-                SqlDataReader Login = CheckIfLoginExists.ExecuteReader();
-                bool DoesLoginExist = Login.Read();
-                Login.Close();
-
-                SqlCommand CheckIfEmailExists = new SqlCommand(CheckEmail, connection);
-                SqlDataReader EMail = CheckIfEmailExists.ExecuteReader();
-                bool DoesEMailExist = EMail.Read();
-                EMail.Close();
+                // Checking if login or Email Is already in the database
+                bool DoesLogExist = DoesLoginExist(RegisterLogin.Text);
+                bool DoesEmExist = DoesEMailExist(RegisterEMail.Text);
+               
 
 
                 // validation
                 if (validateLog && validatePass && validateMail)
                 {
-                    if(DoesLoginExist == false && DoesEMailExist == false)
+                    if(DoesLogExist == false && DoesEmExist == false)
                     {
                         SqlCommand command = new SqlCommand(insertValues, connection);
                         int IsSuccesfull = command.ExecuteNonQuery();
@@ -166,11 +209,21 @@ namespace TaskManagerApp
         private void LoginSend_Click(object sender, RoutedEventArgs e)
         {
             // if(login = databaseLogin && password = databasePassoword)
-            // open new window
-            TaskWindow window = new TaskWindow();
-            window.Show();
-            this.Close();
-            // else wrong login or password popup
+            // open TaskWindow
+            bool DoesLogExist = DoesLoginExist(LoginLogin.Text);
+            string HashedPassword = Hash_SHA256(LoginPassword.Password);
+            bool DoesPassExist = DoesPasswordExist(HashedPassword);
+            if (DoesLogExist && DoesPassExist)
+            {
+                TaskWindow window = new TaskWindow();
+                window.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Wrong login or password");
+            }
+            
         }
 
         

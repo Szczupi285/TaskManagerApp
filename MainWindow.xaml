@@ -21,7 +21,7 @@
 
             <Grid>
                 <TextBlock Margin="10,0,10,0">Password</TextBlock>
-                <PasswordBox PasswordChar="*" Margin="10,20,10,10" Name="RegisterPassword" PasswordChanged="RegisterPassword_PasswordChanged"></PasswordBox>
+                <PasswordBox Margin="10,20,10,10" Name="RegisterPassword" PasswordChanged="RegisterPassword_PasswordChanged"></PasswordBox>
                 <Border Name="UndBorRegPass" Height="2" VerticalAlignment="Bottom" 
                         Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
             </Grid>
@@ -44,7 +44,7 @@
             <TextBox Margin="10,0,10,10" Name="LoginLogin"></TextBox>
 
             <TextBlock Margin="10,0,10,0">Password</TextBlock>
-            <TextBox Margin="10,0,10,10" Name="LoginPassword"></TextBox>
+            <PasswordBox Margin="10,0,10,10" Name="LoginPassword"></PasswordBox>
             <Button Name ="LoginSend" Margin="10,0,10,0" Click="LoginSend_Click">Login</Button>
 
         </StackPanel>
