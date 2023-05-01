@@ -21,7 +21,7 @@
 
             <Grid>
                 <TextBlock Margin="10,0,10,0">Password</TextBlock>
-                <TextBox Margin="10,20,10,10" Name="RegisterPassword" TextChanged="RegisterPassword_TextChanged"></TextBox>
+                <PasswordBox PasswordChar="*" Margin="10,20,10,10" Name="RegisterPassword" PasswordChanged="RegisterPassword_PasswordChanged"></PasswordBox>
                 <Border Name="UndBorRegPass" Height="2" VerticalAlignment="Bottom" 
                         Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
             </Grid>

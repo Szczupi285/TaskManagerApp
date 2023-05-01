@@ -17,6 +17,7 @@ using System.Data;
 using Microsoft.Win32;
 using System.IO;
 using Microsoft.SqlServer.Server;
+using System.Security.Cryptography;
 
 namespace TaskManagerApp
 {
@@ -35,13 +36,23 @@ namespace TaskManagerApp
 
         }
 
+        private static string Hash_SHA256(string password)
+        {
+            var sha = SHA256.Create();
+
+            var bytes = Encoding.Default.GetBytes(password);
+
+            var passwordHashed = sha.ComputeHash(bytes);
+
+            return Convert.ToBase64String(passwordHashed);
+
+        }
 
 
 
 
 
-        // underline if text doesn't meet the requirements
-        // to do show validation requirements
+        
         #region register form validation
         private void RegisterLogin_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -58,11 +69,12 @@ namespace TaskManagerApp
             }
         }
 
-        private void RegisterPassword_TextChanged(object sender, TextChangedEventArgs e)
+     
+        private void RegisterPassword_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (RegisterPassword.Text.Length < 20 && RegisterPassword.Text.Length > 8 &&
-                RegisterPassword.Text.Any(char.IsDigit)
-                && RegisterPassword.Text.Any(char.IsLetter) && RegisterPassword.Text.Any(char.IsUpper))
+            if (RegisterPassword.Password.Length < 20 && RegisterPassword.Password.Length > 8 &&
+              RegisterPassword.Password.Any(char.IsDigit)
+              && RegisterPassword.Password.Any(char.IsLetter) && RegisterPassword.Password.Any(char.IsUpper))
             {
                 validatePass = true;
                 UndBorRegPass.Background = new SolidColorBrush(Color.FromRgb(50, 205, 50));
@@ -92,16 +104,16 @@ namespace TaskManagerApp
         private void RegisterSend_Click(object sender, RoutedEventArgs e)
         {
             // hash password
-            // hide passoword 
             // take to constider what path you will be using so it will work on every pc
             try
             {
 
-
+                
                 string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
                 SqlConnection connection = new SqlConnection(connectionString);
 
-                string insertValues = $"INSERT INTO Users (Login, password, [E-mail]) Values('{RegisterLogin.Text}', '{RegisterPassword.Text}', '{RegisterEMail.Text}')";
+                string HashedPassword = Hash_SHA256(RegisterPassword.Password);
+                string insertValues = $"INSERT INTO Users (Login, password, [E-mail]) Values('{RegisterLogin.Text}', '{HashedPassword}', '{RegisterEMail.Text}')";
                 string CheckLogin = $"Select Login FROM Users WHERE Login = '{RegisterLogin.Text}'";
                 string CheckEmail = $"Select [E-Mail] From Users WHERE ([E-Mail]) = '{RegisterEMail.Text}'";
 
@@ -141,7 +153,6 @@ namespace TaskManagerApp
                     }
                     
                 }
-                // closing the connections
                 
                 connection.Close();
             }
@@ -162,6 +173,6 @@ namespace TaskManagerApp
             // else wrong login or password popup
         }
 
-       
+        
     }
 }
