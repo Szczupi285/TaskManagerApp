@@ -9,16 +9,29 @@
     <Grid>
 
         <StackPanel Name="RegisterForm" Width="150" Height="300"  HorizontalAlignment="Left" Margin="50" VerticalAlignment="Top">
-            <TextBlock Text="Register" FontSize="40" />
+            <TextBlock Text="Register" FontSize="40" Margin="0,0,0,10"/>
 
-            <TextBlock Margin="10,0,10,0">Login</TextBlock>
-            <TextBox  Margin="10,0,10,10" Name="RegisterLogin"></TextBox>
+            <Grid>
+                <TextBlock VerticalAlignment="Top" Margin="10,0,10,0">Login</TextBlock>
+                <TextBox  Margin="10,20,10,10" Name="RegisterLogin" TextChanged="RegisterLogin_TextChanged"></TextBox>
+                <Border Name="UndBorRegLog" Height="2" VerticalAlignment="Bottom" 
+                        Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
+            </Grid>
 
-            <TextBlock Margin="10,0,10,0">Password</TextBlock>
-            <TextBox Margin="10,0,10,10" Name="RegisterPassword"></TextBox>
 
-            <TextBlock Margin="10,0,10,0">E-mail</TextBlock>
-            <TextBox Margin="10,0,10,10" Name="RegisterEMail"></TextBox>
+            <Grid>
+                <TextBlock Margin="10,0,10,0">Password</TextBlock>
+                <TextBox Margin="10,20,10,10" Name="RegisterPassword" TextChanged="RegisterPassword_TextChanged"></TextBox>
+                <Border Name="UndBorRegPass" Height="2" VerticalAlignment="Bottom" 
+                        Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
+            </Grid>
+
+            <Grid>
+                <TextBlock Margin="10,0,10,0">E-mail</TextBlock>
+                <TextBox Margin="10,20,10,10" Name="RegisterEMail" TextChanged="RegisterEMail_TextChanged"></TextBox>
+                <Border Name="UndBorRegMail" Height="2" VerticalAlignment="Bottom" 
+                        Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
+            </Grid>
 
             <Button Name ="RegisterSend" Margin="10,0,10,0" Click="RegisterSend_Click">Register</Button>
 

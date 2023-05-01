@@ -26,6 +26,8 @@ namespace TaskManagerApp
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
+            
+            // for record in database that date hasn't expired yet
             for(int i = 0; i < 20; i++)
             {
                 // Sets the rowDefinition heigth automaticly
@@ -51,6 +53,36 @@ namespace TaskManagerApp
                 CurrentNotes.Children.Add(frame);
                 
             }
+            
+        }
+
+        private void AddNewNote_Click(object sender, RoutedEventArgs e)
+        {
+            DateTime? selectedDate = DeadlineData.SelectedDate;
+
+            if (String.IsNullOrEmpty(NoteInput.Text))
+                throw new NotImplementedException();
+            // write a communicate that you need to input the text
+            else
+            {
+                if (selectedDate.HasValue && selectedDate > DateTime.Now)
+                {
+                    
+                    // send data and text to database
+                    // write that note has been addes succesfuly
+                    // reload the page
+                }
+                else
+                {
+                    // write a communicate that you need to input the data
+                }
+            }
+
+            
+                
+                        
+                    
+
             
         }
     }
