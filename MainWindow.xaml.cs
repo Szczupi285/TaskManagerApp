@@ -18,6 +18,8 @@ using Microsoft.Win32;
 using System.IO;
 using Microsoft.SqlServer.Server;
 using System.Security.Cryptography;
+using System.Windows.Controls.Primitives;
+using System.Text.RegularExpressions;
 
 namespace TaskManagerApp
 {
@@ -106,16 +108,21 @@ namespace TaskManagerApp
         private void RegisterLogin_TextChanged(object sender, TextChangedEventArgs e)
         {
             
-            if (RegisterLogin.Text.Length < 16)
+            if (RegisterLogin.Text.Length < 16 && RegisterLogin.Text.Length >3)
             {
                 validateLog = true;
                 UndBorRegLog.Background = new SolidColorBrush(Color.FromRgb(50,205,50));
+                
+                LoginPopupText.Visibility = Visibility.Hidden;
             }
             else
             {
+                LoginPopupText.Visibility = Visibility.Visible;
+                LoginPopupText.Text = "Login length higher than 3 and lower than 16 \u2717";
                 validateLog = false;
                 UndBorRegLog.Background = new SolidColorBrush(Color.FromRgb(255, 0, 0));
             }
+            
         }
 
      
@@ -123,30 +130,77 @@ namespace TaskManagerApp
         {
             if (RegisterPassword.Password.Length < 20 && RegisterPassword.Password.Length > 8 &&
               RegisterPassword.Password.Any(char.IsDigit)
-              && RegisterPassword.Password.Any(char.IsLetter) && RegisterPassword.Password.Any(char.IsUpper))
+              && RegisterPassword.Password.Any(char.IsUpper))
             {
                 validatePass = true;
                 UndBorRegPass.Background = new SolidColorBrush(Color.FromRgb(50, 205, 50));
+                PasswordPopupText.Visibility = Visibility.Hidden;
             }
             else
             {
+                PasswordPopupText.Visibility = Visibility.Visible;
                 validatePass = false;
                 UndBorRegPass.Background = new SolidColorBrush(Color.FromRgb(255, 0, 0));
             }
-        }
 
+            StringBuilder s = new StringBuilder();
+            if (RegisterPassword.Password.Length > 7 && RegisterPassword.Password.Length < 21)
+                s.AppendLine("Password Lenght must be higher than 7 and lower than 21 \u2713");
+            else
+                s.AppendLine("Password Lenght must be higher than 7 and lower than 21\u2717");
+            if (RegisterPassword.Password.Any(char.IsDigit))
+                s.AppendLine("Password Must contain Digit \u2713");
+            else
+                s.AppendLine("Password Must contain Digit \u2717");
+            if (RegisterPassword.Password.Any(char.IsUpper))
+            {
+                s.AppendLine("Password must contain Uppercase letter\u2713");
+            }
+            else
+                s.AppendLine("Password must contain Uppercase letter\u2717");
+
+            PasswordPopupText.Text = s.ToString();
+
+
+        }
         private void RegisterEMail_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (RegisterEMail.Text.Length < 60 && RegisterEMail.Text.Contains('@') && RegisterEMail.Text.Contains('.') && RegisterEMail.Text.IndexOf('.') < RegisterEMail.Text.Length -2)
+            if (RegisterEMail.Text.Length > 6 && RegisterEMail.Text.Length < 60 && RegisterEMail.Text.Contains('@') && RegisterEMail.Text.Contains('.') && RegisterEMail.Text.Substring(RegisterEMail.Text.LastIndexOf('.') + 1).Length >= 2)
             {
+                EMailPopupText.Visibility = Visibility.Hidden;
                 validateMail = true;
                 UndBorRegMail.Background = new SolidColorBrush(Color.FromRgb(50, 205, 50));
             }
             else
             {
+                EMailPopupText.Visibility = Visibility.Visible;
                 validateMail = false;
                 UndBorRegMail.Background = new SolidColorBrush(Color.FromRgb(255, 0, 0));
             }
+
+           
+                
+
+                StringBuilder s = new StringBuilder();
+                if (RegisterEMail.Text.Length < 5 || RegisterEMail.Text.Length > 60)
+                    s.AppendLine("Email Lenght must be higher than 5 and lower than 60 \u2717");
+                else
+                    s.AppendLine("E-Mail Lenght must be higher than 5 and lower than 60 \u2713");
+                if ((RegisterEMail.Text.LastIndexOf('@') <= 0))
+                    s.AppendLine("E-Mail Must contain @ \u2717");
+                else
+                    s.AppendLine("E-Mail Must contain @ \u2713");
+                if (RegisterEMail.Text.Contains('.') && RegisterEMail.Text.Substring(RegisterEMail.Text.LastIndexOf('.') + 1).Length >= 2)
+                {
+                    s.AppendLine("E-Mail Must have proper domain \u2713");
+                }
+                else
+                    s.AppendLine("E-Mail Must have proper domain  \u2717");
+
+                EMailPopupText.Text = s.ToString();
+
+                
+            
         }
         #endregion
 

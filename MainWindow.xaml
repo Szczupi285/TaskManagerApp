@@ -5,35 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskManagerApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="1000">
     <Grid>
 
-        <StackPanel Name="RegisterForm" Width="150" Height="300"  HorizontalAlignment="Left" Margin="50" VerticalAlignment="Top">
+        <StackPanel Name="RegisterForm" Width="600" Height="300"  HorizontalAlignment="Left" Margin="50" VerticalAlignment="Top">
             <TextBlock Text="Register" FontSize="40" Margin="0,0,0,10"/>
 
             <Grid>
-                <TextBlock VerticalAlignment="Top" Margin="10,0,10,0">Login</TextBlock>
-                <TextBox  Margin="10,20,10,10" Name="RegisterLogin" TextChanged="RegisterLogin_TextChanged"></TextBox>
+                <TextBlock VerticalAlignment="Top" Margin="10,0,400,0">Login</TextBlock>
+                <TextBox  Margin="10,20,400,10" Name="RegisterLogin" TextChanged="RegisterLogin_TextChanged"></TextBox>
                 <Border Name="UndBorRegLog" Height="2" VerticalAlignment="Bottom" 
-                        Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
+                        Margin="10,0,400,10" Background="Red" Visibility="Visible"/>
+
+
+                <TextBlock Name ="LoginPopupText" Text="Login length higher than 3 and lower than 16 &#x2717;" VerticalAlignment="Center" HorizontalAlignment="Right"  Width="350" Foreground="Black" Background="White" Visibility="Hidden"/>
+                
             </Grid>
 
 
-            <Grid>
-                <TextBlock Margin="10,0,10,0">Password</TextBlock>
-                <PasswordBox Margin="10,20,10,10" Name="RegisterPassword" PasswordChanged="RegisterPassword_PasswordChanged"></PasswordBox>
+            <Grid Height="48" Margin="0,10,0,10">
+                <TextBlock Margin="10,0,400,0">Password</TextBlock>
+                <PasswordBox Margin="10,20,400,10" Name="RegisterPassword" 
+                             PasswordChanged="RegisterPassword_PasswordChanged"></PasswordBox>
+                
                 <Border Name="UndBorRegPass" Height="2" VerticalAlignment="Bottom" 
-                        Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
+                        Margin="10,0,400,10" Background="Red" Visibility="Visible"/>
+                
+                <TextBlock Name ="PasswordPopupText" Text="" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="350" Foreground="Black" Background="White"/>
+
+
             </Grid>
 
-            <Grid>
-                <TextBlock Margin="10,0,10,0">E-mail</TextBlock>
-                <TextBox Margin="10,20,10,10" Name="RegisterEMail" TextChanged="RegisterEMail_TextChanged"></TextBox>
+            <Grid Height="48">
+                <TextBlock Margin="10,0,400,0">E-mail</TextBlock>
+                <TextBox Margin="10,20,400,10" Name="RegisterEMail" TextChanged="RegisterEMail_TextChanged"></TextBox>
                 <Border Name="UndBorRegMail" Height="2" VerticalAlignment="Bottom" 
-                        Margin="10,0,10,10" Background="Red" Visibility="Visible"/>
+                        Margin="10,0,400,10" Background="Red" Visibility="Visible"/>
+                <TextBlock Name ="EMailPopupText" VerticalAlignment="Top" HorizontalAlignment="Right" Width="350" Text="" Foreground="Black" Background="White" />
             </Grid>
 
-            <Button Name ="RegisterSend" Margin="10,0,10,0" Click="RegisterSend_Click">Register</Button>
+            <Button Name ="RegisterSend" Margin="10,0,400,0" Click="RegisterSend_Click">Register</Button>
 
         </StackPanel>
 
