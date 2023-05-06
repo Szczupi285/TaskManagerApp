@@ -28,6 +28,9 @@ namespace TaskManagerApp
     /// </summary>
     public partial class MainWindow : Window
     {
+       
+        
+
         bool validateLog;
         bool validatePass;
         bool validateMail;
@@ -219,13 +222,11 @@ namespace TaskManagerApp
                 string insertValues = $"INSERT INTO Users (Login, password, [E-mail]) Values('{RegisterLogin.Text}', '{HashedPassword}', '{RegisterEMail.Text}')";
                 string CheckLogin = $"Select Login FROM Users WHERE Login = '{RegisterLogin.Text}'";
                 string CheckEmail = $"Select [E-Mail] From Users WHERE ([E-Mail]) = '{RegisterEMail.Text}'";
-
                 connection.Open();
 
                 // Checking if login or Email Is already in the database
                 bool DoesLogExist = DoesLoginExist(RegisterLogin.Text);
                 bool DoesEmExist = DoesEMailExist(RegisterEMail.Text);
-               
 
 
                 // validation
@@ -248,6 +249,8 @@ namespace TaskManagerApp
                     {
                         MessageBox.Show("Login or E-Mail is already used");
                     }
+                    // Set the Properties to values of user
+
                     
                 }
                 
@@ -267,16 +270,48 @@ namespace TaskManagerApp
             bool DoesLogExist = DoesLoginExist(LoginLogin.Text);
             string HashedPassword = Hash_SHA256(LoginPassword.Password);
             bool DoesPassExist = DoesPasswordExist(HashedPassword);
+
+
+
+            int Id;
+            string Login;
+            string Password;
+
+
+            
             if (DoesLogExist && DoesPassExist)
             {
-                TaskWindow window = new TaskWindow();
+                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
+                SqlConnection connection = new SqlConnection(connectionString);
+                connection.Open();
+
+
+                string LoginHashedPass = Hash_SHA256(LoginPassword.Password);
+                string GetID = $"Select Id From Users Where Login = '{LoginLogin.Text}' And Password = '{LoginHashedPass}'";
+                SqlCommand UserId = new SqlCommand(GetID, connection);
+
+                object result = UserId.ExecuteScalar();
+                if (result != null && int.TryParse(result.ToString(), out int id))
+                    Id = id;
+                else
+                    throw new Exception("Couldn't retrive Id");
+                Login = LoginLogin.Text;
+                Password = LoginPassword.Password;
+
+
+
+                connection.Close();
+                TaskWindow window = new TaskWindow(Id, Login,Password);
                 window.Show();
                 this.Close();
+
+
             }
             else
             {
                 MessageBox.Show("Wrong login or password");
             }
+            
             
         }
 
