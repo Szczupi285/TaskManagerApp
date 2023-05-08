@@ -6,11 +6,13 @@
         xmlns:local="clr-namespace:TaskManagerApp"
         mc:Ignorable="d" Loaded="OnWindowLoaded"
         Title="TaskWindow" Height="450" Width="850">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        
         
         <StackPanel Grid.Column="0" HorizontalAlignment="Left" Width="160" Height="400" Margin="10" VerticalAlignment="Top">
             <TextBlock Margin="10" FontSize="20">Add new note</TextBlock>
@@ -37,5 +39,17 @@
                 
             </Grid>
         </ScrollViewer>
+        <Grid Grid.Column="2">
+            <Button Name="Settings" Content="&#x2630;" Click="Settings_Click" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+            
+            <StackPanel Name="Checkboxes" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,20,0,0" Visibility="Hidden" Background="Gainsboro">
+                <Button Name="Refresh" Content="&#x27F3;" Click="Refresh_Click" ></Button>
+                <CheckBox Checked="Highlight_Checked" Unchecked="Highlight_Unchecked" Name="Highlight">Highlight near deadline tasks</CheckBox>
+                <CheckBox Checked="Remainder_Checked" Unchecked="Remainder_Unchecked" Name="Remainder" Margin="0,10,0,10">Show remainder about task coming to an end</CheckBox>
+                <CheckBox Checked="Sort_Checked" Unchecked="Sort_Unchecked" Name="Sort">Sort by deadline</CheckBox>   
+            </StackPanel>
+        </Grid>
+        
     </Grid>
+    
 </Window>

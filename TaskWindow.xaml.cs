@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
@@ -13,7 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using System.Windows.Shell;
+using System.Net.Mail;
 
 namespace TaskManagerApp
 {
@@ -22,6 +25,7 @@ namespace TaskManagerApp
     /// </summary>
     public partial class TaskWindow : Window
     {
+        
         public int Id { get; set; }
         public string Login { get; set; }
         public string Password;
@@ -32,6 +36,64 @@ namespace TaskManagerApp
             this.Password = password;
 
             InitializeComponent();
+
+           
+            
+            OpenAndCloseConn((connection) => {
+                // initialize Settings table for user if he logs in for the first time 
+                SqlCommand InitializeSettings = new SqlCommand($"INSERT INTO Settings (UserId) Select '{Id}' WHERE NOT EXISTS (Select (UserId) from Settings Where UserId = '{Id}')", connection);
+                InitializeSettings.ExecuteNonQuery();
+                // checks the settings values that already has been set
+                // set's them up upon initialize so they have values that user set in previous session 
+                SqlCommand getSettings = new SqlCommand($"SELECT DeadlineSetting, SendRemainder, SortByDeadline From Settings Where UserId = '{Id}'", connection);
+                SqlDataReader SettingsRecord = getSettings.ExecuteReader();
+                while (SettingsRecord.Read())
+                {
+                    
+                    if (SettingsRecord.GetBoolean(0) == false)
+                        Highlight.IsChecked = false;
+                    else 
+                        Highlight.IsChecked = true;
+
+
+                    if (SettingsRecord.GetBoolean(1) == false)
+                        Remainder.IsChecked = false;
+                    else
+                        Remainder.IsChecked = true;
+
+
+                    if(SettingsRecord.GetBoolean(2) == false)
+                        Sort.IsChecked = false;
+                    else
+                        Sort.IsChecked = true;
+                }
+                SettingsRecord.Close();
+                // popup remainder
+                if(Remainder.IsChecked == true)
+                {
+                    // shows the number of tasks that deadline is tommorow
+                    SqlCommand ComingToEnd = new SqlCommand($"Select Count(Note) From Notes Where DATEDIFF(day, GETDATE(), Deadline) = 1 AND Deadline > GetDate()", connection);
+                    int count = (int)ComingToEnd.ExecuteScalar();
+
+                    if (count > 0)
+                        MessageBox.Show($"You have {count} tasks coming to an end");
+                }
+
+            });
+
+            
+            
+        }
+
+        private void OpenAndCloseConn(Action<SqlConnection> action)
+        {
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                action(connection);
+                connection.Close();
+            }
         }
 
         private void LoadNotesFromDB()
@@ -39,18 +101,22 @@ namespace TaskManagerApp
             string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=E:\repository\TaskManagerApp\Database1.mdf;Integrated Security=True";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
+            SqlCommand ReadNotes;
 
-            SqlCommand ReadNotes = new SqlCommand($"SELECT Note FROM Notes WHERE UserID = '{Id}' AND Deadline > CONVERT(DATETIME, GETDATE(), 101)", connection);
+            if(Sort.IsChecked == true)
+            {
+                ReadNotes = new SqlCommand($"SELECT Note, Deadline FROM Notes WHERE UserID = '{Id}' AND Deadline > CONVERT(DATETIME, GETDATE(), 101) Order BY Deadline ASC", connection);
+            }
+            else
+            {
+                ReadNotes = new SqlCommand($"SELECT Note, Deadline FROM Notes WHERE UserID = '{Id}' AND Deadline > CONVERT(DATETIME, GETDATE(), 101)", connection);
+                
+            }
             SqlDataReader readerNotes = ReadNotes.ExecuteReader();
 
 
-
-
-            //SqlCommand countSql = new SqlCommand($"SELECT COUNT(*) AS Note FROM Notes WHERE Id = '4' AND deadline > CONVERT(DATETIME, GETDATE(), 101)");
-            //int count = (int)countSql.ExecuteScalar();
+            
             // for record in database that date hasn't expired yet
-
-            // to do rn only one note is visible, repair to make them all show
             int iterator = 0;
             while (readerNotes.Read())
             {
@@ -61,7 +127,7 @@ namespace TaskManagerApp
 
                 TextBlock Note = new TextBlock();
                 // read value from database
-                Note.Text = $"{readerNotes.GetString(0)}";
+                Note.Text = $"Task: {readerNotes["Note"]} \nDeadline: {((DateTime)readerNotes["Deadline"]).ToString("yyyy/MM/dd")}";
                 Note.Margin = new Thickness(10);
 
                 Note.TextWrapping = TextWrapping.Wrap;
@@ -71,6 +137,12 @@ namespace TaskManagerApp
                 frame.Margin = new Thickness(10);
                 frame.BorderThickness = new Thickness(2);
                 frame.BorderBrush = Brushes.Black;
+                // gets the difference of deadline and current time
+                TimeSpan difference = (DateTime)readerNotes["Deadline"] - DateTime.Now;
+                // checks if deadline is less than in 3 days and if highlight setting is turned on
+                if (difference.TotalDays < 3 && Highlight.IsChecked == true)
+                    frame.Background = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
+
                 Grid.SetRow(frame, iterator);
                 iterator++;
 
@@ -79,12 +151,7 @@ namespace TaskManagerApp
 
             }
 
-            /* for (int i = 0; i < count; i++)
-             {
-                 // Sets the rowDefinition heigth automaticly
-
-
-             }*/
+           
             connection.Close();
         }
 
@@ -136,6 +203,76 @@ namespace TaskManagerApp
                     
 
             
+        }
+        #region Settings
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            if(Checkboxes.Visibility == Visibility.Hidden)
+                Checkboxes.Visibility = Visibility.Visible;
+            else
+                Checkboxes.Visibility = Visibility.Hidden;
+
+            
+        }
+
+       
+        
+        private void Highlight_Checked(object sender, RoutedEventArgs e)
+        {
+            OpenAndCloseConn((connection) => {
+                SqlCommand HighlightChecked = new SqlCommand($"Update Settings Set DeadlineSetting = '1' Where UserId = '{Id}'", connection);
+                HighlightChecked.ExecuteNonQuery();
+            });
+        }
+
+        private void Highlight_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OpenAndCloseConn((connection) => {
+                SqlCommand HighlightChecked = new SqlCommand($"Update Settings Set DeadlineSetting = '0' Where UserId = '{Id}'", connection);
+                HighlightChecked.ExecuteNonQuery();
+            });
+
+        }
+
+        private void Remainder_Checked(object sender, RoutedEventArgs e)
+        {
+            OpenAndCloseConn((connection) => {
+                SqlCommand HighlightChecked = new SqlCommand($"Update Settings Set SendRemainder = '1' Where UserId = '{Id}'", connection);
+                HighlightChecked.ExecuteNonQuery();
+            });
+        }
+        private void Remainder_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OpenAndCloseConn((connection) => {
+                SqlCommand HighlightChecked = new SqlCommand($"Update Settings Set SendRemainder = '0' Where UserId = '{Id}'", connection);
+                HighlightChecked.ExecuteNonQuery();
+            });
+        }
+
+        private void Sort_Checked(object sender, RoutedEventArgs e)
+        {
+            OpenAndCloseConn((connection) => {
+                SqlCommand HighlightChecked = new SqlCommand($"Update Settings Set SortByDeadline = '1' Where UserId = '{Id}'", connection);
+                HighlightChecked.ExecuteNonQuery();
+            });
+
+        }
+
+        private void Sort_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OpenAndCloseConn((connection) => {
+                SqlCommand HighlightChecked = new SqlCommand($"Update Settings Set SortByDeadline = '0' Where UserId = '{Id}'", connection);
+                HighlightChecked.ExecuteNonQuery();
+            });
+
+        }
+
+        #endregion
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentNotes.Children.Clear();
+            LoadNotesFromDB();
         }
     }
 }
