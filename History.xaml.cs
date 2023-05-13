@@ -67,7 +67,7 @@ namespace TaskManagerApp
             else
             {
                 ReadNotes = new SqlCommand($"SELECT Note, Deadline FROM Notes WHERE UserID = '{Id}' AND IsFinished = '0'" +
-                    $"AND (Deadline < CONVERT(DATETIME, GETDATE(), 101) OR IsFailed = '1')", connection);
+                    $"AND (IsFailed='1' OR CONVERT(DATETIME, GETDATE(), 101) > Deadline)", connection);
 
             }
             

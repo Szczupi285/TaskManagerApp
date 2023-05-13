@@ -45,6 +45,7 @@
             <StackPanel Name="Checkboxes" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,20,0,0" Visibility="Hidden" Background="Gainsboro">
                 <Button Name="LoginPage" Content="Go to Login Page" Click="LoginPage_Click" ></Button>
                 <Button Name="History" Content="Go to History" Click="History_Click" ></Button>
+                <Button Name="Analytics" Content="Go to Analytics" Click="Analytics_Click"></Button>
                 <CheckBox Checked="Highlight_Checked" Unchecked="Highlight_Unchecked" Name="Highlight">Highlight near deadline tasks</CheckBox>
                 <CheckBox Checked="Remainder_Checked" Unchecked="Remainder_Unchecked" Name="Remainder" Margin="0,10,0,10">Show remainder about task coming to an end</CheckBox>
                 <CheckBox Checked="Sort_Checked" Unchecked="Sort_Unchecked" Name="Sort">Sort by deadline</CheckBox>   

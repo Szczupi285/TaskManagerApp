@@ -369,5 +369,12 @@ namespace TaskManagerApp
             this.Close();
             history.Show();
         }
+
+        private void Analytics_Click(object sender, RoutedEventArgs e)
+        {
+            Analytics analytics = new Analytics(Id, Login, Password);
+            this.Close();
+            analytics.Show();
+        }
     }
     }
